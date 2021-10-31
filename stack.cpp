@@ -129,7 +129,7 @@ int main(){
         draw();
         input();
         logic();
-        Sleep(100);
+        Sleep(25);
     }
     
     if(status == WIN){
