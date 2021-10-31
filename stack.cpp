@@ -6,8 +6,10 @@
 #include <cstdlib>
 using namespace std;
 enum direction{LEFT, RIGHT};
+enum gameState{WIN, LOSE, PLAYING};
 
-bool gameover, kbHit;
+gameState status;
+bool kbHit;
 int x, y, prevX;
 vector<vector<int>> boxXY;
 direction dir;
@@ -38,7 +40,7 @@ vector<vector<int>> getBoxC(int xPos, int yPos){
 }
 
 void setup(){
-    gameover = false;
+    status = PLAYING;
     dir = LEFT;
     x = 1;
     y = 1;
@@ -88,12 +90,16 @@ void input(){
 void logic(){
     if(kbHit){
         if(!dataXY.empty()) boxWidth -= abs(x - prevX);
+        if(boxWidth <= 0){
+            status = LOSE;
+            return;
+        }
 
-        if(prevX > x){
+        if(prevX > x){ // cuts the left side
             x += prevX - x;
             boxXY = getBoxC(x, y);
         }
-        else boxXY = getBoxC(x, y);
+        else boxXY = getBoxC(x, y); // cuts the right side
 
         dataXY.push_back(boxXY);
         prevX = x;
@@ -110,8 +116,7 @@ void logic(){
             break;
     }
 
-    if(boxWidth <= 0) gameover = true;
-    if(y >= height) gameover = true;
+    if(y >= height) status = WIN;
     if(x <= 1) dir = RIGHT;
     else if(x+boxWidth >= width) dir = LEFT;
 
@@ -120,12 +125,19 @@ void logic(){
 
 int main(){
     setup();
-    while(!gameover){
+    while(status == PLAYING){
         draw();
         input();
         logic();
         Sleep(100);
     }
-    cout << "You Won!!!" << endl;
-    system("pause");
+    
+    if(status == WIN){
+        cout << "Congratulations! You WON!!!" << endl;
+        system("pause");
+    }
+    else if(status == LOSE){
+        cout << "You lost..." << endl;
+        system("pause");
+    }
 }
