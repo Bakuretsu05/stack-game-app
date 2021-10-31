@@ -88,12 +88,15 @@ void input(){
 void logic(){
     if(kbHit){
         if(!dataXY.empty()) boxWidth -= abs(x - prevX);
-        prevX = x;
 
-        // saves current box to dataXY
-        boxXY = getBoxC(x, y);
+        if(prevX > x){
+            x += prevX - x;
+            boxXY = getBoxC(x, y);
+        }
+        else boxXY = getBoxC(x, y);
+
         dataXY.push_back(boxXY);
-
+        prevX = x;
         y += boxHeight;
         kbHit = false;
     }
